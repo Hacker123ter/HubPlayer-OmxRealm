@@ -1,0 +1,8 @@
+item: PUFFERFISH_BUCKET
+item2: PUFFERFISH
+name: "&6Магическое &1Ведро"
+name2: "&6Зловещая &1Рыбка"
+description: "&7Используйте этот предмет для &aскрытия игроков."
+description2: "&7Используйте этот предмет для &aпоказа игроков."
+slot: 0
+cooldown: 3 # В секундах

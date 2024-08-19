@@ -1,0 +1,16 @@
+name: HubPlayer
+version: '1.0.13-OmxRealm'
+main: org.dw363.HubPlayer
+api-version: '1.21'
+load: STARTUP
+authors: [dw363]
+description: Плагин добавляющий предмет для скрытия игроков в хабе. Сделано специально для сервера OmxRealm. Project The OMX
+website: https://github.com/Hacker123ter
+commands:
+  hubplayer:
+    usage: /<command> reload
+    permission: hubplayer.reload
+permissions:
+  hubplayer.reload:
+    description: Позволяет перезагрузить конфигурацию плагина.
+    default: op
