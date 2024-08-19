@@ -57,6 +57,9 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
         } else {
             giveHubItem(player, false);
         }
+
+        // Убедимся, что предмет находится в нужном слоте
+        ensureItemInSlot(player);
     }
 
     @EventHandler
@@ -65,8 +68,16 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
             Player player = (Player) event.getWhoClicked();
             int configuredSlot = config.getInt("slot");
 
-            if (event.getSlot() == configuredSlot) {
+            if (event.getSlot() == configuredSlot || event.getRawSlot() == configuredSlot) {
                 event.setCancelled(true);
+                Bukkit.getScheduler().runTaskLater(this, () -> ensureItemInSlot(player), 1L);
+                return;
+            }
+
+            ItemStack currentItem = event.getCurrentItem();
+            if (currentItem != null && isConfiguredItem(currentItem)) {
+                event.setCancelled(true);
+                Bukkit.getScheduler().runTaskLater(this, () -> ensureItemInSlot(player), 1L);
             }
         }
     }
@@ -120,6 +131,7 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
                 Bukkit.getScheduler().runTaskLater(this, () -> isRightClicking.put(player.getUniqueId(), false), 1L);
             }
         }
+        ensureItemInSlot(player);
     }
 
     @EventHandler
@@ -192,7 +204,7 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
         }
         player.setMetadata("players_hidden", new FixedMetadataValue(this, true));
         if (sendMessage) {
-            sendActionBar(player,ChatColor.GREEN + "Игроки скрыты");
+            sendActionBar(player, ChatColor.GREEN + "Игроки скрыты");
         }
     }
 
@@ -201,7 +213,7 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
             player.showPlayer(this, p);
         }
         player.removeMetadata("players_hidden", this);
-        sendActionBar(player,ChatColor.GREEN + "Игроки показаны");
+        sendActionBar(player, ChatColor.GREEN + "Игроки показаны");
     }
 
     private String parseHex(String message) {
@@ -244,6 +256,16 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
                 player.spigot().sendMessage(net.md_5.bungee.api.ChatMessageType.ACTION_BAR, net.md_5.bungee.api.chat.TextComponent.fromLegacyText(message));
             }
         }.runTask(this);
+    }
+
+    private void ensureItemInSlot(Player player) {
+        int configuredSlot = config.getInt("slot");
+        ItemStack itemInSlot = player.getInventory().getItem(configuredSlot);
+
+        if (itemInSlot == null || !isConfiguredItem(itemInSlot)) {
+            boolean playersHidden = hiddenPlayersStatus.getOrDefault(player.getUniqueId(), false);
+            giveHubItem(player, playersHidden);
+        }
     }
 
     @Override
