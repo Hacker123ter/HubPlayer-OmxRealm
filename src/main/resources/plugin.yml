@@ -1,5 +1,5 @@
 name: HubPlayer
-version: '1.0.15-OmxRealm'
+version: '1.0.15.1-OmxRealm'
 main: org.dw363.HubPlayer
 api-version: '1.21'
 load: STARTUP
@@ -9,10 +9,10 @@ website: https://github.com/Hacker123ter
 commands:
   hubplayer:
     description: Основная команда HubPlayer
-    usage: /<command> reload
-    permission: hubplayer.reload
+    usage: /<command> hide|reload|show
+    permission: hubplayer.command
     permission-message: У вас нет прав для использования данной команды.
 permissions:
-  hubplayer.reload:
+  hubplayer.command:
     description: Позволяет перезагрузить конфигурацию плагина.
     default: op
