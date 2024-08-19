@@ -6,7 +6,7 @@
 
     <groupId>org.dw363</groupId>
     <artifactId>HubPlayer</artifactId>
-    <version>1.0.14-OmxRealm</version>
+    <version>1.0.15-OmxRealm</version>
     <packaging>jar</packaging>
 
     <name>HubPlayer</name>

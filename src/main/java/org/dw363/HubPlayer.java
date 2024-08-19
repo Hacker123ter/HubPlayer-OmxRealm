@@ -58,7 +58,6 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
             giveHubItem(player, false);
         }
 
-        // Убедимся, что предмет находится в нужном слоте
         ensureItemInSlot(player);
     }
 
@@ -266,28 +265,63 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
             boolean playersHidden = hiddenPlayersStatus.getOrDefault(player.getUniqueId(), false);
             giveHubItem(player, playersHidden);
         }
+
+        ItemStack configuredItem = player.getInventory().getItem(configuredSlot);
+        for (int i = 0; i < player.getInventory().getSize(); i++) {
+            if (i != configuredSlot && isConfiguredItem(player.getInventory().getItem(i))) {
+                player.getInventory().setItem(i, null);
+            }
+        }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
-            if (sender.hasPermission("hubplayer.reload")) {
-                reloadConfig();
-                config = getConfig();
-                sender.sendMessage(ChatColor.GREEN + "Конфигурация перезагружена.");
-            } else {
-                sender.sendMessage(ChatColor.RED + "У вас нет прав для выполнения этой команды.");
-            }
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Только игроки могут использовать эту команду.");
             return true;
         }
-        return false;
+
+        Player player = (Player) sender;
+        if (command.getName().equalsIgnoreCase("hubplayer")) {
+            if (args.length == 0) {
+                player.sendMessage(ChatColor.RED + "Используйте /hubplayer <hide|show|reload>");
+                return true;
+            }
+
+            if (args[0].equalsIgnoreCase("hide")) {
+                hidePlayers(player, true);
+                hiddenPlayersStatus.put(player.getUniqueId(), true);
+                giveHubItem(player, true);
+            } else if (args[0].equalsIgnoreCase("show")) {
+                showPlayers(player);
+                hiddenPlayersStatus.put(player.getUniqueId(), false);
+                giveHubItem(player, false);
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                reloadConfig();
+                config = getConfig();
+                player.sendMessage(ChatColor.GREEN + "Конфигурация перезагружена.");
+            } else {
+                player.sendMessage(ChatColor.RED + "Неизвестная команда. Используйте /hubplayer <hide|show|reload>");
+            }
+        }
+        return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> completions = new ArrayList<>();
-        if (args.length == 1 && sender.hasPermission("hubplayer.reload")) {
-            completions.add("reload");
+        if (command.getName().equalsIgnoreCase("hubplayer")) {
+            if (args.length == 1) {
+                if ("hide".startsWith(args[0].toLowerCase())) {
+                    completions.add("hide");
+                }
+                if ("show".startsWith(args[0].toLowerCase())) {
+                    completions.add("show");
+                }
+                if ("reload".startsWith(args[0].toLowerCase())) {
+                    completions.add("reload");
+                }
+            }
         }
         return completions;
     }
