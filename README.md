@@ -1,6 +1,6 @@
 ## HubPlayer(OmxRealm)
 
-![Version](https://img.shields.io/badge/Версия-1.0.15-blue.svg)
+![Version](https://img.shields.io/badge/Версия-1.0.15.1-blue.svg)
 ![API](https://img.shields.io/badge/Spigot%201.21%2B-blue.svg)
 
 <h3 align="center">Discord: luckytsb</h3>
@@ -11,7 +11,7 @@
 
 ## 🚀 Установка:
 
-- 😧 Скачайте <a href="https://github.com/Hacker123ter/HubPlayer-OmxRealm/raw/HubPlayer/target/HubPlayer-1.0.15-OmxRealm.jar" target="_blank">HubPlayer-1.0.15-OmxRealm.jar</a>.
+- 😧 Скачайте <a href="https://github.com/Hacker123ter/HubPlayer-OmxRealm/raw/HubPlayer/target/HubPlayer-1.0.15.1-OmxRealm.jar" target="_blank">HubPlayer-1.0.15.1-OmxRealm.jar</a>.
 - 🐈 Переместите его в папку "plugins" вашего сервера. (Убедитесь что Ядро и версия совместимы с плагином)
 - 🪄 Перезапустите сервер.
 - 😸 Радуйтесь жизни!
@@ -52,10 +52,12 @@ P.S. Название предмета в конфиге можно писать
 ## 🏗️ Команды:
 ```
 /hubplayer reload
+/hubplayer show
+/hubplayer hide
 ```
 
 ## 🔒 Права:
 ```
-hubplayer.reload
+hubplayer.command
 default: op
 ```
