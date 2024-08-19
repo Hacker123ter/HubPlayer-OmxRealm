@@ -1,5 +1,5 @@
 name: HubPlayer
-version: '1.0.15.1-OmxRealm'
+version: '1.0.16-OmxRealm'
 main: org.dw363.HubPlayer
 api-version: '1.21'
 load: STARTUP

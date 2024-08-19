@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
 
@@ -166,17 +168,17 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
     private void giveHubItem(Player player, boolean playersHidden) {
         Material material;
         String name;
-        String description;
+        List<String> description;
 
         try {
             if (playersHidden) {
                 material = Material.valueOf(config.getString("item2").toUpperCase());
                 name = config.getString("name2");
-                description = config.getString("description2");
+                description = config.getStringList("description2");
             } else {
                 material = Material.valueOf(config.getString("item").toUpperCase());
                 name = config.getString("name");
-                description = config.getString("description");
+                description = config.getStringList("description");
             }
         } catch (IllegalArgumentException e) {
             player.sendMessage(ChatColor.RED + "Ошибка: Неверный материал в конфигурации.");
@@ -188,12 +190,17 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
 
         if (meta != null) {
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', parseHex(name)));
-            meta.setLore(List.of(ChatColor.translateAlternateColorCodes('&', parseHex(description))));
+            List<String> formattedDescription = new ArrayList<>();
+            for (String line : description) {
+                formattedDescription.add(ChatColor.translateAlternateColorCodes('&', parseHex(line)));
+            }
+            meta.setLore(formattedDescription);
             hubItem.setItemMeta(meta);
         }
 
         player.getInventory().setItem(config.getInt("slot"), hubItem);
     }
+
 
     private void hidePlayers(Player player, boolean sendMessage) {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -216,8 +223,19 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
     }
 
     private String parseHex(String message) {
-        return message.replaceAll("&#([A-Fa-f0-9]{6})", "§x§$1§$2§$3§$4§$5§$6");
+        Pattern pattern = Pattern.compile("&#([A-Fa-f0-9]{6})");
+        Matcher matcher = pattern.matcher(message);
+        StringBuffer result = new StringBuffer();
+        while (matcher.find()) {
+            String hex = matcher.group(1);
+            String replacement = "§x§" + hex.charAt(0) + "§" + hex.charAt(1) + "§" + hex.charAt(2)
+                    + "§" + hex.charAt(3) + "§" + hex.charAt(4) + "§" + hex.charAt(5);
+            matcher.appendReplacement(result, replacement);
+        }
+        matcher.appendTail(result);
+        return result.toString();
     }
+
 
     private boolean isConfiguredItem(ItemStack item) {
         if (item == null || !item.hasItemMeta()) return false;
