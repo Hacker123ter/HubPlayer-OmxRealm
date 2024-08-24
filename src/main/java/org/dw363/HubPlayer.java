@@ -294,32 +294,32 @@ public class HubPlayer extends JavaPlugin implements Listener, CommandExecutor, 
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("Только игроки могут использовать эту команду.");
-            return true;
-        }
-
-        Player player = (Player) sender;
         if (command.getName().equalsIgnoreCase("hubplayer")) {
             if (args.length == 0) {
-                player.sendMessage(ChatColor.RED + "Используйте /hubplayer <hide|show|reload>");
+                sender.sendMessage(ChatColor.RED + "Используйте /hubplayer <hide|show|reload>");
                 return true;
             }
-
-            if (args[0].equalsIgnoreCase("hide")) {
-                hidePlayers(player, true);
-                hiddenPlayersStatus.put(player.getUniqueId(), true);
-                giveHubItem(player, true);
-            } else if (args[0].equalsIgnoreCase("show")) {
-                showPlayers(player);
-                hiddenPlayersStatus.put(player.getUniqueId(), false);
-                giveHubItem(player, false);
-            } else if (args[0].equalsIgnoreCase("reload")) {
+            if (args[0].equalsIgnoreCase("reload")) {
                 reloadConfig();
                 config = getConfig();
-                player.sendMessage(ChatColor.GREEN + "Конфигурация перезагружена.");
+                sender.sendMessage(ChatColor.GREEN + "Конфигурация перезагружена.");
             } else {
-                player.sendMessage(ChatColor.RED + "Неизвестная команда. Используйте /hubplayer <hide|show|reload>");
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage("Эту команду могут использовать только игроки.");
+                    return true;
+                }
+                Player player = (Player) sender;
+                if (args[0].equalsIgnoreCase("hide")) {
+                    hidePlayers(player, true);
+                    hiddenPlayersStatus.put(player.getUniqueId(), true);
+                    giveHubItem(player, true);
+                } else if (args[0].equalsIgnoreCase("show")) {
+                    showPlayers(player);
+                    hiddenPlayersStatus.put(player.getUniqueId(), false);
+                    giveHubItem(player, false);
+                } else {
+                    player.sendMessage(ChatColor.RED + "Неизвестная команда. Используйте /hubplayer <hide|show|reload>");
+                }
             }
         }
         return true;
